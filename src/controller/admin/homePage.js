@@ -77,12 +77,15 @@ exports.createHomePage = (req, res) => {
         offernls,
         subheadernls,
     } = req.body;
+ 
 
 
-
-    if (bannerPics && bannerPics.length > 0) {
+    if (bannerPics && bannerPics.length > 0){
         req.body.banners = bannerPics.map((bannerPic, index) => ({
-            img: bannerPic.filename,
+            img: {
+                data: bannerPic.buffer.toString('base64'),
+                contentType : "homePageBanner/png"
+            },
             navigateTo: `/${bannerSlugs[index]}?cid=${bannerIds[index]}&type=product`,
         }))
     }
@@ -225,11 +228,6 @@ exports.getHomePage = (req, res) => {
         .populate({path : 'homeMakeover.productId', select : 'productPictures'})
         .populate({path : 'newLaunches.productId', select : 'productPictures'})
         .exec((error, homePage) => {
-
-           console.log(error);
-           console.log(homePage);
-
-
             if(error) return res.status(400).json({ error });
             if(homePage){
                 return res.status(200).json({ homePage })

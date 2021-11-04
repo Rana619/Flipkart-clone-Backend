@@ -36,7 +36,6 @@ exports.addAddress = (req, res) => {
 }
 
 exports.getAddress = (req, res) => {
-    console.log(req.user._id);
     UserAddress.findOne({ user : req.user._id })
     .exec((error, UserAddress) => {
         if(error) return res.status(400).json({ error });

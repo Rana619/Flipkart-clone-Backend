@@ -4,7 +4,7 @@ const slugify = require('slugify');
 const Category = require('../models/category.js');
 const category = require('../models/category.js');
 
-exports.createProduct = (req,res)=>{
+exports.createProduct = async (req,res)=>{
    const {
        name, price, quantity, description, category, createdBy
    } = req.body;
@@ -12,29 +12,58 @@ exports.createProduct = (req,res)=>{
    let productPictures = [];
 
    if( req.files.length > 0 ){
-       productPictures = req.files.map( file =>{
-          return { img : file.filename }
+     productPictures = req.files.map( file =>{
+          return { img : 
+            {
+              data: file.buffer.toString('base64'),
+              contentType : "product/png"
+            }
+          }
        })
    }
 
-   const product = new Product({
-       name : name,
-       slug : slugify(name),
-       price,
-       quantity,
-       description,
-       productPictures,
-       category,
-       createdBy : req.user._id
+   const productObj = new Product({
+    name : name,
+    slug : slugify(name),
+    price,
+    quantity,
+    description,
+    productPictures,
+    category,
+    createdBy : req.user._id
    });
 
-   product.save(((error, product) =>{
-       if(error) return res.status(400).json({ error });
-       if(product){
-           res.status(201).json({ product });
-       }
-   }));
+   const updatedProductObj = {
+    name : name,
+    slug : slugify(name),
+    price,
+    quantity,
+    description,
+    productPictures,
+    category,
+    createdBy : req.user._id
+   };
 
+    Product.findOne({ name : name })
+         .exec((error, product) => {
+          if(error) return res.status(400).json({ error });
+          if(product){
+           Product.findOneAndUpdate({ name : name }, updatedProductObj)
+           .exec((error, updatedProduct)=> {
+               if(error) return res.status(400).json({ error });
+               if(updatedProduct) {
+                return res.status(201).json({ product : updatedProduct });
+               }
+           })
+          } else {
+            productObj.save(((error, product) =>{
+              if(error) return res.status(400).json({ error });
+              if(product){
+                  res.status(201).json({ product });
+              }
+            }));
+          }
+         })
 }
 
 exports.getProductsBySlug = (req, res) => {
@@ -120,7 +149,6 @@ exports.deleteProductById = (req, res) => {
   }
 };
 
-//without sorted,  all products
 exports.getProducts = async (req, res) => {
     const products = await Product.find({})
     .sort({createdAt : -1})
@@ -132,13 +160,4 @@ exports.getProducts = async (req, res) => {
   res.status(200).json({ products });
 };
 
-//with sorted products by creater
-// exports.getProducts = async (req, res) => {
-//   const products = await Product.find({ createdBy: req.user._id })
-//     .select("_id name price quantity slug description productPictures category createdBy")
-//     .populate({ path: "category", select: "_id name" })
-//     .exec();
-
-//   res.status(200).json({ products });
-// };
 

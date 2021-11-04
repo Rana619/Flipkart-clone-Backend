@@ -12,13 +12,19 @@ const pageSchema = new mongoose.Schema({
     },
     banners : [
         {
-            img : { type : String },
+            img : {
+                data : {type : String},
+                contentType : {type : String}
+              },
             navigateTo : { type : String }
         }
     ],
     products : [ 
         {
-            img : { type : String },
+            img : {
+                data: {type : String},
+                contentType: {type : String}
+              },
             navigateTo : { type : String }
         }
     ],

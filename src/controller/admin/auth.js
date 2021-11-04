@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 
 exports.signup = (req,res)=>{
 
-    User.findOne({ email : req.body.email })
+     User.findOne({ email : req.body.email })
     .exec(async (error, user) =>{
         if(user) return res.status(400).json({
             message : 'Admin already registered'
@@ -49,18 +49,12 @@ exports.signin = (req,res) =>{
         if(user){
             const isPassword = await user.authenticate(req.body.password);
             if( isPassword && user.role === 'admin'){
-                  const token = jwt.sign({ _id : user._id, role : user.role }, process.env.JWT_SECRET, {expiresIn : '1h'})
+                  const token = jwt.sign({ _id : user._id, role : user.role }, process.env.JWT_SECRET, {expiresIn : '12h'})
                   const { _id, firstName, lastName, email, role, fullName } = user
                   res.cookie('token', token, { expiresIn : '1h' });
                   res.status(200).json({
                       token,
                       user
-                    //   _id,
-                    //   firstName,
-                    //   lastName,
-                    //   email,
-                    //   role,
-                    //   fullName
                   });               
                 } else {
                     return res.status(400).json({

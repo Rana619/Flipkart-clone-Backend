@@ -6,7 +6,7 @@ const router = express.Router();
 router.post('/page/create', requireSignin, adminMiddleware, upload.fields([
     { name : 'banners' },
     { name : 'products' }
-]), createPage );
+]), createPage ); 
 
 router.get(`/page/:category/:type`, getPage);
 router.get(`/pages`, requireSignin, adminMiddleware, getPages);

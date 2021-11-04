@@ -28,18 +28,29 @@ env.config();
 
 //DB connection 
 const connection_url = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASS}@cluster0.dalpc.mongodb.net/${process.env.MONGODB_NAME}?retryWrites=true&w=majority`
-mongoose.connect(connection_url)
+
+const ConnectMongoDB = async ()=>{
+  await  mongoose.connect(connection_url)
     .then(() => {
       console.log('Connected to database !!');
     })
     .catch((err)=>{
       console.log('Connection failed !!'+ err.message);
     });
+}
+
+ConnectMongoDB();
+
+
+
+
 
 //middlewear
 app.use(cors());
 app.use(express.json());
+
 app.use('/public', express.static(path.join(__dirname, 'uploads')));
+
 app.use('/api', authRoutes)
 app.use('/api', adminRoutes)
 app.use('/api', categoryRoutes)
@@ -68,6 +79,14 @@ app.post("/data", (req,res)=>{
 })
 
 
-app.listen(process.env.PORT, ()=>{
-    console.log(`server is running on ${process.env.PORT}`);
+let port = process.env.PORT;
+if (port == null || port == "") {
+  port = 4500;
+}
+
+app.listen(port, ()=>{
+    console.log(`server is running on ${port}`);
 })
+
+
+

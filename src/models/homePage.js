@@ -2,9 +2,12 @@ const mongoose = require('mongoose');
 const homePageSchema = new mongoose.Schema({
     banners : [ 
         {
-            img: { type : String },
+        img : { 
+              data : {type : String},
+              contentType : { type : String }
+             },
             navigateTo : { type : String },
-        }
+        } 
     ],
     dealsOfThe : [ 
         {

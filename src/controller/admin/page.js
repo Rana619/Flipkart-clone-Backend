@@ -8,19 +8,26 @@ exports.createPage = (req, res) =>{
    
    if(banners && banners.length > 0){
        req.body.banners = banners.map((banner, index) =>({
-           img: banner.filename,
+           img: {
+                data: banner.buffer.toString('base64'),
+                contentType : "pageBanner/png"
+           },
            navigateTo : `/${bannersCat[index]}?cid=${bannersCatID[index]}&type=product`
        }))
    }
    if(products && products.length > 0){
        req.body.products = products.map((product, index) =>({ 
-           img: product.filename,
+           img: {
+               data: product.buffer.toString('base64'),
+               contentType : "PagePoster/png"
+           },
            navigateTo : `/${productsCat[index]}?cid=${productsCatID[index]}&type=product`
        }))
    }
    
     req.body.createdBy = req.user._id;
 
+    
     Page.findOne({ category : req.body.category })
     .exec((error, page) => {
         if(error) return res.status(400).json({ error });
