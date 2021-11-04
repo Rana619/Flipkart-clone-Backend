@@ -47,7 +47,7 @@ ConnectMongoDB();
 
 //middlewear
 app.use(cors({
-    origin:'*', 
+    origin:'https://flipkart-clone-admin.web.app', 
     credentials:true,        
 }));
 
