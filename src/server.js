@@ -27,7 +27,8 @@ env.config();
 
 
 //DB connection 
-const connection_url = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASS}@cluster0.dalpc.mongodb.net/${process.env.MONGODB_NAME}?retryWrites=true&w=majority`
+//const connection_url = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASS}@cluster0.dalpc.mongodb.net/${process.env.MONGODB_NAME}?retryWrites=true&w=majority`
+const connection_url = `mongodb+srv://RanaDebnathS:RanaSPass@cluster0.dalpc.mongodb.net/EcommerceDB?retryWrites=true&w=majority`
 
 const ConnectMongoDB = async ()=>{
   await  mongoose.connect(connection_url)
